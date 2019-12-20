@@ -45,6 +45,13 @@ public protocol NibDesignableProtocol: NSObjectProtocol {
      - returns: Name of a single view nib file.
      */
     func nibName() -> String
+    
+    /**
+    Called in the default implementation of loadNib(). Default is bundle name in the class.
+
+    - returns: Name of a bundle that contains of the view.
+    */
+    func bundleName() -> Bundle
 }
 
 extension NibDesignableProtocol {
@@ -56,8 +63,7 @@ extension NibDesignableProtocol {
      - returns: UIView instance loaded from a nib file.
      */
     public func loadNib() -> UIView {
-        let bundle = Bundle(for: type(of: self))
-        let nib = UINib(nibName: self.nibName(), bundle: bundle)
+        let nib = UINib(nibName: self.nibName(), bundle: self.bundleName())
         return nib.instantiate(withOwner: self, options: nil)[0] as! UIView // swiftlint:disable:this force_cast
     }
 
@@ -88,6 +94,16 @@ extension UIView {
     @objc open func nibName() -> String {
         return type(of: self).description().components(separatedBy: ".").last!
     }
+    
+    /**
+    Called in the default implementation of loadNib(). Default is bundle name in the class.
+
+    - returns: Name of a bundle that contains of the view.
+    */
+    @objc open func bundleName() -> Bundle {
+        return Bundle(for: type(of: self))
+    }
+
 }
 
 @IBDesignable
